@@ -326,15 +326,6 @@ h3 {
     background-color: #ffdb4d;
 }
 
-/* Roadmap Section */
-.arrow-roadmap {
-    width: clamp(300px, 80vw, 500px);
-    height: auto;
-    margin: -60px auto 0;
-    display: block;
-}
-
-/* Pub Container Styles */
 :root {
     --pub-green: #15803d;
     --pub-gold: #fbbf24;
@@ -343,13 +334,12 @@ h3 {
 }
 
 .pub-container {
-    width: 90%;
-    max-width: 800px;
+    max-width: min(800px, 90%);
     margin: 40px auto;
     position: relative;
-    padding: 15px;
+    padding: clamp(15px, 3vw, 20px);
     background: rgba(0, 0, 0, 0.4);
-    border-radius: 16px;
+    border-radius: clamp(8px, 2vw, 16px);
     backdrop-filter: blur(5px);
 }
 
@@ -357,21 +347,21 @@ h3 {
     text-align: center;
     color: var(--pub-gold);
     font-family: 'Luckiest Guy', cursive;
-    font-size: clamp(24px, 6vw, 2.5rem);
-    margin-bottom: 2rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    margin-bottom: clamp(1rem, 3vw, 2rem);
     text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .subtitle {
     text-align: center;
     color: white;
-    font-size: clamp(16px, 3vw, 1.2rem);
-    margin-bottom: 3rem;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .leprechaun {
     position: absolute;
-    left: clamp(-60px, -10vw, -100px);
+    left: min(-100px, -12vw);
     top: 20px;
     transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
@@ -379,8 +369,9 @@ h3 {
     filter: drop-shadow(0 0 8px rgba(134, 239, 172, 0.3));
 }
 
+/* Keep original animations */
 .leprechaun-emoji {
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
     transform: scaleX(-1);
     display: inline-block;
     transition: transform 0.5s;
@@ -390,13 +381,8 @@ h3 {
     animation: bounce 0.5s infinite alternate;
 }
 
-@keyframes bounce {
-    from { transform: scaleX(-1) translateY(0); }
-    to { transform: scaleX(-1) translateY(-10px); }
-}
-
 .leprechaun-text {
-    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
     color: var(--path-color);
     font-weight: bold;
     margin-top: 0.5rem;
@@ -407,35 +393,18 @@ h3 {
 .pub {
     position: relative;
     background: rgba(21, 128, 61, 0.2);
-    border-radius: 12px;
-    padding: 15px;
-    margin: 0 0 40px 60px;
+    border-radius: clamp(8px, 2vw, 12px);
+    padding: clamp(15px, 3vw, 20px);
+    margin: 0 0 clamp(40px, 8vw, 60px) clamp(60px, 10vw, 80px);
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 120px;
+    min-height: clamp(100px, 20vw, 120px);
     border: 1px solid rgba(134, 239, 172, 0.2);
-}
-
-.pub:hover:not(.locked) {
-    transform: translateX(10px);
-    background: rgba(21, 128, 61, 0.3);
-    border-color: rgba(134, 239, 172, 0.4);
-}
-
-.pub.locked {
-    opacity: 0.6;
-    cursor: not-allowed;
-    filter: grayscale(0.8);
-}
-
-.pub.unlocked {
-    background: rgba(21, 128, 61, 0.4);
-    box-shadow: 0 0 20px rgba(134, 239, 172, 0.2);
 }
 
 .pub-glass {
     position: absolute;
-    left: -40px;
+    left: clamp(-45px, -8vw, -60px);
     top: 50%;
     transform: translateY(-50%);
     width: clamp(30px, 5vw, 40px);
@@ -447,35 +416,81 @@ h3 {
     box-shadow: 0 0 10px rgba(134, 239, 172, 0.2);
 }
 
-.beer-liquid {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 0%;
-    background: var(--pub-gold);
-    transition: height 1s ease-in-out;
-}
-
-.foam {
-    display: none;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 10px;
-    background: var(--foam-white);
-    border-radius: 4px;
-}
-
 .pub-content {
-    padding-left: clamp(10px, 3vw, 20px);
+    padding-left: clamp(15px, 3vw, 20px);
 }
 
 .pub-name {
-    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-size: clamp(1.1rem, 2.5vw, 1.25rem);
     color: var(--pub-white);
     margin-bottom: 0.5rem;
-    text-shadow: 0 0 5px rgba(251, 191, 36, 0.);
+    text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
 }
+
+.pub-description {
+    color: #e5e9eb;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+.milestone-number {
+    position: absolute;
+    right: clamp(15px, 3vw, 20px);
+    top: clamp(15px, 3vw, 20px);
+    font-size: clamp(0.8rem, 1.5vw, 0.875rem);
+    color: var(--pub-gold);
+    opacity: 0.7;
+}
+
+/* Media queries for extreme screen sizes */
+@media screen and (max-width: 480px) {
+    .leprechaun {
+        position: relative;
+        left: 0;
+        margin-bottom: 20px;
+    }
+    
+    .pub {
+        margin-left: 40px;
+    }
+    
+    .pub-glass {
+        left: -35px;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    .pub-container {
+        max-width: 1000px;
+    }
+}
+
+/* Keep all original animations unchanged */
+@keyframes bounce {
+    from { transform: scaleX(-1) translateY(0); }
+    to { transform: scaleX(-1) translateY(-10px); }
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px var(--pub-gold),
+                   0 0 20px var(--pub-gold);
+    }
+    to {
+        box-shadow: 0 0 30px var(--pub-gold),
+                   0 0 40px var(--pub-gold);
+    }
+}
+
+@keyframes party {
+    from { box-shadow: 0 0 20px var(--pub-gold); }
+    to { box-shadow: 0 0 40px var(--pub-green); }
+}
+
+@keyframes fade-out {
+    0% { opacity: 0.8; }
+    100% { opacity: 0; }
+}
+
 footer {
     color: white;
     text-align: center;
