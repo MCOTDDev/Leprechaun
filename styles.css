@@ -326,6 +326,33 @@ h3 {
     background-color: #ffdb4d;
 }
 
+.arrow-roadmap {
+    width: clamp(300px, 60vw, 500px); /* Responsive width */
+    height: clamp(300px, 60vw, 500px); /* Responsive height */
+    margin-top: clamp(-80px, -15vw, -120px);
+    z-index: -1;
+    position: absolute; /* Ensure proper layering */
+    left: 0;
+}
+
+/* Media query for very small screens */
+@media screen and (max-width: 480px) {
+    .arrow-roadmap {
+        width: 250px;
+        height: 250px;
+        margin-top: -60px;
+    }
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 1400px) {
+    .arrow-roadmap {
+        width: 600px;
+        height: 600px;
+        margin-top: -140px;
+    }
+}
+
 :root {
     --pub-green: #15803d;
     --pub-gold: #fbbf24;
