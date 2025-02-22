@@ -403,6 +403,7 @@ h3 {
     z-index: 10;
     text-align: center;
     filter: drop-shadow(0 0 8px rgba(134, 239, 172, 0.3));
+    pointer-events: none; /* Prevent interference with clicks */
 }
 
 .leprechaun-emoji {
@@ -412,10 +413,6 @@ h3 {
     transition: transform 0.5s;
 }
 
-.leprechaun.moving .leprechaun-emoji {
-    animation: bounce 0.5s infinite alternate;
-}
-
 .leprechaun-text {
     font-size: clamp(0.75rem, 1.5vw, 0.875rem);
     color: var(--path-color);
@@ -423,6 +420,104 @@ h3 {
     margin-top: 0.5rem;
     white-space: nowrap;
     text-shadow: 0 0 5px rgba(134, 239, 172, 0.5);
+}
+
+/* Enhanced path dots for better visibility on mobile */
+.path-dot {
+    position: absolute;
+    width: clamp(4px, 1.5vw, 8px);
+    height: clamp(4px, 1.5vw, 8px);
+    background: var(--path-color);
+    border-radius: 50%;
+    opacity: 0;
+    animation: fade-out 1.5s forwards;
+    pointer-events: none;
+}
+
+/* Adjusted bounce animation */
+.leprechaun.moving .leprechaun-emoji {
+    animation: bounce 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes bounce {
+    from { 
+        transform: scaleX(-1) translateY(0);
+    }
+    to { 
+        transform: scaleX(-1) translateY(clamp(-8px, -2vw, -10px));
+    }
+}
+
+/* Media queries for different screen sizes */
+@media screen and (max-width: 768px) {
+    .leprechaun {
+        left: -50px; /* Adjusted starting position for medium screens */
+        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1); /* Slightly faster transition */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .leprechaun {
+        position: fixed; /* Use fixed positioning on mobile */
+        left: 20px;
+        top: auto;
+        bottom: 20px; /* Position at bottom of screen */
+        transform: translateX(0);
+        transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .leprechaun.moving {
+        transform: translateX(calc(100vw - 100px)); /* Move across screen width */
+    }
+
+    .leprechaun-emoji {
+        font-size: clamp(2rem, 8vw, 2.5rem); /* Slightly smaller on mobile */
+    }
+
+    .leprechaun-text {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .path-dot {
+        width: 4px;
+        height: 4px;
+        opacity: 0.6;
+    }
+}
+
+/* Large screen optimizations */
+@media screen and (min-width: 1400px) {
+    .leprechaun {
+        left: -120px;
+    }
+
+    .leprechaun-emoji {
+        font-size: 4rem;
+    }
+
+    .path-dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Ensure smooth movement */
+.pub-container {
+    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scroll during animation */
+}
+
+/* Fade out animation */
+@keyframes fade-out {
+    0% { 
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(0.5);
+    }
 }
 
 .pub {
