@@ -1,0 +1,544 @@
+@import url('https://fonts.googleapis.com/css2?family=Carattere&family=Poppins:wght@500&display=swap');
+
+body, html {
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    width: 100vw; /* Ensures it doesn’t exceed the viewport width */
+}
+
+
+body {
+	font-family: 'Poppins', sans-serif;
+	color: white;
+    background: url('background.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Title with Pulse Effect */
+.title {
+    font-family: 'Carattere', cursive;
+    color: #ffd700;
+    font-size: 100px;
+    text-align: center;
+    line-height: 0.9;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: smoothPulse 3s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes smoothPulse {
+    0% { 
+        transform: scale(1);
+    }
+    50% { 
+        transform: scale(1.15);
+    }
+    100% { 
+        transform: scale(1);
+    }
+}
+
+/* Container (Aligned Left) */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Moves everything inside to the left */
+    width: 90%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    margin-left: 20px; /* Shifts icons slightly to center over CA box */
+}
+
+/* Social Icons (Forced Hover Effect) */
+.social-links .social-icon i {
+    color: white;
+    font-size: 40px;
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.social-links .social-icon i:hover {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+}
+
+/* Dex Screener Icon (Fixed Hover) */
+.social-links .dex-icon {
+    width: 55px; /* Increased size */
+    height: 55px;
+	margin-top: -6px;
+	margin-left: -3px;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.social-links .dex-icon:hover {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+}
+
+/* CA Box (Shifted Further Left) */
+.ca-box {
+    background-color: #fff;
+    color: #004d00;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0px 0px 15px rgba(255, 215, 0, 1);
+    transition: 0.3s;
+    width: fit-content;
+    margin-top: 10px; /* Moves it closer to the info box */
+    margin-left: -25px; /* Moves the CA box left */
+}
+
+.ca-box:hover {
+    background-color: #ffd700;
+    color: #004d00;
+    box-shadow: 0px 0px 15px rgba(255, 215, 0, 1);
+}
+
+.ca-box i {
+    margin-left: 8px;
+}
+
+/* Info Box (Centered & Longer) */
+.info-box {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 50px; /* Increased horizontal padding */
+    border-radius: 25px;
+    text-align: center;
+    width: 100%; /* Takes up most of the screen */
+    max-width: 900px; /* Longer width */
+    margin: 20px auto; /* Centers it */
+}
+
+.info-box h2 {
+	 font-family: 'Luckiest Guy', cursive;
+    font-size: 24px;
+    color: #ffd700;
+    margin-bottom: 8px;
+}
+
+.info-box p {
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.info-box2 {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px 50px; /* Increased horizontal padding */
+    border-radius: 25px;
+    text-align: center;
+    width: 100%; /* Takes up most of the screen */
+    max-width: 900px; /* Longer width */
+    margin: 50px auto; /* Centers it */
+}
+
+.info-box2 p {
+    font-size: 17px;
+    line-height: 1.5;
+}
+/* Gallery Container */
+
+
+.gallery-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 85%;
+    max-width: 1200px;
+    margin: 5px auto;
+    overflow: hidden;
+}
+
+.gallery-arrow {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    position: absolute;
+    padding: 1rem;
+}
+
+.left-arrow {
+    left: 120px;
+}
+
+.right-arrow {
+    right: 0;
+}
+
+.gallery-arrow:hover {
+    transform: scale(1.2);
+}
+
+.gallery {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.gallery-track {
+    display: flex;
+    align-items: center;
+    transition: transform 0.5s ease-in-out;
+    height: 300px; /* Fixed height for consistent sizing */
+}
+
+.gallery-track {
+    display: flex;
+    align-items: center;
+    transition: transform 0.5s ease-in-out;
+    height: 600px; /* Increased from 400px */
+}
+
+.gallery-track img {
+    min-width: 500px; /* Increased from 200px */
+    height: 450px; /* Increased from 300px */
+    object-fit: contain; /* Changed from cover to prevent cropping */
+    border-radius: 4px;
+    transition: all 0.5s ease-in-out;
+    position: relative;
+    transform-origin: center;
+}
+
+.gallery-track img.side {
+    width: 500px; /* Increased from 200px */
+    height: 375px; /* Increased from 250px */
+    opacity: 0.6;
+    transform: scale(0.8);
+}
+
+.gallery-track img.center {
+    width: 667px; /* Increased from 300px */
+    height: 600px; /* Increased from 400px */
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+}
+
+.gallery-track img.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.how-to-buy {
+    font-size: 48px; /* Increased size */
+    color: #ffd700;
+     font-family: 'Luckiest Guy', cursive;
+    text-align: center;
+    transform: scale(1) rotate(0deg);
+    transition: transform 1s ease-in-out;
+}
+
+@keyframes pulseTilt {
+    0% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.1) rotate(3deg); }
+    100% { transform: scale(1) rotate(-3deg); }
+}
+
+.how-to-buy.pulsing {
+    animation: pulseTilt 3s infinite;
+}
+
+.how-to-buy1 {
+    max-width: 70%;
+    margin: 0 auto;
+}
+
+.buy-step {
+    display: flex;
+    align-items: flex-start;
+    background-color: #1b1c2c;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 20px 20px 0px 20px;  /* Three rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+}
+
+.buy-step:hover {
+    transform: scale(1.05);
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+}
+
+.buy-content {
+    text-align: left;
+}
+
+h3 {
+    font-size: 18px;
+    margin: 0;
+}
+
+p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.download-btn {
+    display: inline-block;
+    background-color: #ffcc00;
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.download-btn:hover {
+    background-color: #ffdb4d;
+}
+
+.arrow-roadmap {
+	 width: 500px; /* Increased size */
+    height: 500px;
+	align: left;
+	margin-top: -120px;
+	z-index: -1;
+}
+
+ :root {
+            --pub-green: #15803d;
+            --pub-gold: #fbbf24;
+            --foam-white: #ffffff;
+            --path-color: #86efac;
+        }
+
+
+        .pub-container {
+            max-width: 800px;
+            margin: 40px auto;
+            position: relative;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        .titlegame {
+            text-align: center;
+            color: var(--pub-gold);
+			font-family: 'Luckiest Guy', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        .leprechaun {
+            position: absolute;
+            left: -100px;
+            top: 20px;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            text-align: center;
+            filter: drop-shadow(0 0 8px rgba(134, 239, 172, 0.3));
+        }
+
+        .leprechaun-emoji {
+            font-size: 3.5rem;
+            transform: scaleX(-1);
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+
+        .leprechaun.moving .leprechaun-emoji {
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: scaleX(-1) translateY(0); }
+            to { transform: scaleX(-1) translateY(-10px); }
+        }
+
+        .leprechaun-text {
+            font-size: 0.875rem;
+            color: var(--path-color);
+            font-weight: bold;
+            margin-top: 0.5rem;
+            white-space: nowrap;
+            text-shadow: 0 0 5px rgba(134, 239, 172, 0.5);
+        }
+
+        .pub {
+            position: relative;
+            background: rgba(21, 128, 61, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 0 0 60px 80px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            border: 1px solid rgba(134, 239, 172, 0.2);
+        }
+
+        .pub:hover:not(.locked) {
+            transform: translateX(10px);
+            background: rgba(21, 128, 61, 0.3);
+            border-color: rgba(134, 239, 172, 0.4);
+        }
+
+        .pub.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .pub.unlocked {
+            background: rgba(21, 128, 61, 0.4);
+            box-shadow: 0 0 20px rgba(134, 239, 172, 0.2);
+        }
+
+        .pub-glass {
+            position: absolute;
+            left: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--pub-green);
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(134, 239, 172, 0.2);
+        }
+
+        .beer-liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: var(--pub-gold);
+            transition: height 1s ease-in-out;
+        }
+
+        .foam {
+            display: none;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 10px;
+            background: var(--foam-white);
+            border-radius: 4px;
+        }
+
+        .pub-content {
+            padding-left: 20px;
+        }
+
+        .pub-name {
+            font-size: 1.25rem;
+            color: var(--pub-white);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
+        }
+
+        .pub-description {
+            color: #e5e9eb;
+            font-size: 1rem;
+        }
+
+        .milestone-number {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 0.875rem;
+            color: var(--pub-gold);
+            opacity: 0.7;
+        }
+
+        .final-pub .pub-glass {
+            border-color: var(--pub-gold);
+        }
+
+        .final-pub.unlocked .pub-glass {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px var(--pub-gold),
+                           0 0 20px var(--pub-gold);
+            }
+            to {
+                box-shadow: 0 0 30px var(--pub-gold),
+                           0 0 40px var(--pub-gold);
+            }
+        }
+
+        .completion-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(45deg, var(--pub-green), #0d9488);
+            color: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.25rem;
+            animation: party 2s infinite alternate;
+        }
+
+        @keyframes party {
+            from { box-shadow: 0 0 20px var(--pub-gold); }
+            to { box-shadow: 0 0 40px var(--pub-green); }
+        }
+
+        .path-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--path-color);
+            border-radius: 50%;
+            opacity: 0;
+            animation: fade-out 1s forwards;
+        }
+
+        @keyframes fade-out {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+		
+footer {
+    color: white;
+    text-align: center;
+    padding: 28px;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    border-top: 2px solid #ffd700; /* Gold top border */
+}
+
+footer p {
+ font-size: 17px;
+}
