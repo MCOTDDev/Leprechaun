@@ -468,31 +468,71 @@ h3 {
     box-shadow: 0 0 10px rgba(134, 239, 172, 0.2);
 }
 
+/* Updated beer liquid styles */
 .beer-liquid {
     position: absolute;
     bottom: 0;
+    left: 0;
     width: 100%;
-    height: 0%;
+    height: 0;
     background: var(--pub-gold);
-    transition: height 1s ease-in-out;
+    transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom;
 }
 
+/* Make sure unlocked pubs show filled beer */
 .pub.unlocked .beer-liquid {
     height: 80%;
 }
 
+/* Updated foam styles */
 .foam {
-    display: none;
     position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
     height: 10px;
     background: var(--foam-white);
     border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show foam when pub is unlocked */
+.pub.unlocked .foam {
+    opacity: 1;
+}
+
+/* Add a filling animation */
+@keyframes fillBeer {
+    from {
+        height: 0;
+    }
+    to {
+        height: 80%;
+    }
+}
+
+/* Add animation for foam appearance */
+@keyframes showFoam {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animations when pub becomes unlocked */
+.pub.unlocked .beer-liquid {
+    animation: fillBeer 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .pub.unlocked .foam {
-    display: block;
+    animation: showFoam 0.5s ease forwards;
+    animation-delay: 1s;
 }
 
 .pub-content {
