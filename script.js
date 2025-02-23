@@ -17,17 +17,15 @@ const rightArrow = document.querySelector(".right-arrow");
 let currentIndex = 0;
 
 function updateGallery() {
-    // Calculate the center position
     const galleryWidth = track.parentElement.offsetWidth;
-    const centerImage = images[currentIndex];
     const isMobile = window.innerWidth <= 768;
     
-    // Adjust centerImageWidth based on screen size
+    // Define centerImageWidth once
     const centerImageWidth = isMobile ? galleryWidth * 0.85 : 480;
     
-    // Calculate the offset to center the current image
-     const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
-                  (currentIndex * centerImageWidth); // Smaller gap on mobile
+    // Single offset calculation with increased scroll distance
+    const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
+                  (currentIndex * centerImageWidth * 1.2); // Increased scroll distance
     
     // Update track position
     track.style.transform = `translateX(${offset}px)`;
@@ -44,6 +42,7 @@ function updateGallery() {
             img.classList.add('hidden');
         }
     });
+}
     
     // Update arrow visibility
     leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
