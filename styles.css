@@ -124,7 +124,7 @@ body {
 /* Info Boxes */
 .info-box, .info-box2 {
     background: rgba(255, 255, 255, 0.2);
-    padding: clamp(15px, 4vw, 50px);
+    padding: clamp(12px, 3vw, 45px);
     border-radius: 25px;
     text-align: center;
     width: 90%;
