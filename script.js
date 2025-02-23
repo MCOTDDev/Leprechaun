@@ -10,115 +10,133 @@ function copyToClipboard() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.querySelector('.gallery-track');
-    const images = Array.from(track.children);
-    const gallery = document.querySelector('.gallery');
-    let currentIndex = 0;
-    let startX = 0;
-    let scrollLeft = 0;
-    let isDragging = false;
+const track = document.querySelector(".gallery-track");
+const images = Array.from(track.children);
+const leftArrow = document.querySelector(".left-arrow");
+const rightArrow = document.querySelector(".right-arrow");
+let currentIndex = 0;
 
-    function calculateImageOffset() {
-        const img = images[0];
-        const computedStyle = window.getComputedStyle(img);
-        const marginRight = parseInt(computedStyle.marginRight);
-        const marginLeft = parseInt(computedStyle.marginLeft);
-        return img.offsetWidth + marginLeft + marginRight;
-    }
+// Touch handling variables
+let isDragging = false;
+let startPos = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let animationID = 0;
+let currentSlide = 0;
 
-    function getTranslateX() {
-        const offset = calculateImageOffset();
-        const containerWidth = gallery.offsetWidth;
-        const imageOffset = (containerWidth - images[0].offsetWidth) / 2;
-        return imageOffset - (currentIndex * offset);
-    }
-
-    function updateGallery() {
-        const translateX = getTranslateX();
-        track.style.transform = `translateX(${translateX}px)`;
-        updateArrowVisibility();
-    }
-
-    function updateArrowVisibility() {
-        const leftArrow = document.querySelector('.left-arrow');
-        const rightArrow = document.querySelector('.right-arrow');
+function updateGallery() {
+    const galleryWidth = track.parentElement.offsetWidth;
+    const centerImage = images[currentIndex];
+    const isMobile = window.innerWidth <= 768;
+    
+    // Adjust centerImageWidth based on screen size
+    const centerImageWidth = isMobile ? galleryWidth : 480;
+    
+    const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
+                  (currentIndex * (centerImageWidth + (isMobile ? 0 : 20)));
+    
+    track.style.transform = `translateX(${offset}px)`;
+    
+    images.forEach((img, index) => {
+        img.classList.remove('center', 'side', 'hidden');
         
-        leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
-        rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
-    }
-
-    window.nextImage = function() {
-        if (currentIndex < images.length - 1) {
-            currentIndex++;
-            updateGallery();
-        }
-    };
-
-    window.prevImage = function() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateGallery();
-        }
-    };
-
-    function handleDragStart(e) {
-        isDragging = true;
-        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
-        scrollLeft = getTranslateX();
-        track.style.transition = 'none';
-    }
-
-    function handleDragMove(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
-        const distance = x - startX;
-        track.style.transform = `translateX(${scrollLeft + distance}px)`;
-    }
-
-    function handleDragEnd(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        track.style.transition = 'transform 0.3s ease-out';
-        
-        const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
-        const distance = x - startX;
-        
-        if (Math.abs(distance) > 100) {
-            if (distance > 0 && currentIndex > 0) {
-                prevImage();
-            } else if (distance < 0 && currentIndex < images.length - 1) {
-                nextImage();
-            } else {
-                updateGallery();
-            }
+        if (index === currentIndex) {
+            img.classList.add('center');
+        } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
+            img.classList.add('side');
         } else {
-            updateGallery();
+            img.classList.add('hidden');
         }
-    }
-
-    gallery.addEventListener('mousedown', handleDragStart);
-    gallery.addEventListener('touchstart', handleDragStart);
-    window.addEventListener('mousemove', handleDragMove);
-    window.addEventListener('touchmove', handleDragMove, { passive: false });
-    window.addEventListener('mouseup', handleDragEnd);
-    window.addEventListener('touchend', handleDragEnd);
-    window.addEventListener('resize', updateGallery);
-
-    // Initialize after images are loaded
-    Promise.all(Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-        });
-    })).then(() => {
-        currentIndex = 0;
-        updateGallery();
     });
+    
+    leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+    rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
+}
+
+function nextImage() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+        updateGallery();
+    }
+}
+
+function prevImage() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateGallery();
+    }
+}
+
+// Touch Event Handlers
+function touchStart(event) {
+    if (window.innerWidth > 768) return; // Only enable touch on mobile
+    
+    isDragging = true;
+    startPos = getPositionX(event);
+    track.classList.add('dragging');
+    animationID = requestAnimationFrame(animation);
+}
+
+function touchMove(event) {
+    if (!isDragging) return;
+    
+    const currentPosition = getPositionX(event);
+    currentTranslate = prevTranslate + currentPosition - startPos;
+}
+
+function touchEnd() {
+    isDragging = false;
+    cancelAnimationFrame(animationID);
+    track.classList.remove('dragging');
+    
+    const movedBy = currentTranslate - prevTranslate;
+    
+    // If moved enough negative, next slide
+    if (movedBy < -100 && currentIndex < images.length - 1) {
+        currentIndex++;
+    }
+    // If moved enough positive, prev slide
+    if (movedBy > 100 && currentIndex > 0) {
+        currentIndex--;
+    }
+    
+    updateGallery();
+}
+
+function getPositionX(event) {
+    return event.type.includes('mouse') 
+        ? event.pageX 
+        : event.touches[0].clientX;
+}
+
+function animation() {
+    if (isDragging) {
+        track.style.transform = `translateX(${currentTranslate}px)`;
+        requestAnimationFrame(animation);
+    }
+}
+
+// Event Listeners
+track.addEventListener('mousedown', touchStart);
+track.addEventListener('touchstart', touchStart);
+track.addEventListener('mousemove', touchMove);
+track.addEventListener('touchmove', touchMove);
+track.addEventListener('mouseup', touchEnd);
+track.addEventListener('touchend', touchEnd);
+track.addEventListener('mouseleave', touchEnd);
+
+// Prevent context menu on long press
+window.addEventListener('contextmenu', e => {
+    if (e.target.closest('.gallery-track')) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 });
 
+// Initial setup
+window.addEventListener('load', updateGallery);
+window.addEventListener('resize', updateGallery);
+updateGallery();
 document.addEventListener('DOMContentLoaded', function() {
     // Get the heading element
     const heading = document.querySelector('.how-to-buy');
