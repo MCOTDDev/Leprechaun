@@ -17,31 +17,32 @@ const rightArrow = document.querySelector(".right-arrow");
 
 let currentIndex = 0;
 let startX = 0;
-let scrollLeft = 0;
-let isDown = false;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let isDragging = false;
 
 function updateGallery() {
-    const isMobile = window.innerWidth <= 1023;
-    
-    if (isMobile) {
-        // Mobile: Simple slide implementation
-        const slideWidth = track.clientWidth;
-        track.style.transform = `translateX(${-currentIndex * slideWidth}px)`;
-    } else {
-        // Desktop: Center active image with scaling
-        const centerOffset = (track.clientWidth - images[0].clientWidth) / 2;
-        const slidePosition = -currentIndex * images[0].clientWidth + centerOffset;
-        track.style.transform = `translateX(${slidePosition}px)`;
-    }
+    const imageWidth = track.clientWidth;
+    currentTranslate = -currentIndex * imageWidth;
+    prevTranslate = currentTranslate;
+    setSliderPosition();
 
     // Update active states
     images.forEach((img, index) => {
-        img.classList.toggle('active', index === currentIndex);
+        if (index === currentIndex) {
+            img.classList.add('active');
+        } else {
+            img.classList.remove('active');
+        }
     });
 
     // Update arrow visibility
     leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
     rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
+}
+
+function setSliderPosition() {
+    track.style.transform = `translateX(${currentTranslate}px)`;
 }
 
 function nextImage() {
@@ -59,44 +60,74 @@ function prevImage() {
 }
 
 // Touch Events
-function handleTouchStart(e) {
-    isDown = true;
-    startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-    scrollLeft = track.scrollLeft;
+function touchStart(event) {
+    isDragging = true;
+    startX = getPositionX(event);
+    track.style.cursor = 'grabbing';
+    track.style.transition = 'none';
 }
 
-function handleTouchMove(e) {
-    if (!isDown) return;
-    e.preventDefault();
+function touchMove(event) {
+    if (!isDragging) return;
     
-    const x = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-    const distance = startX - x;
+    const currentX = getPositionX(event);
+    const diff = currentX - startX;
+    currentTranslate = prevTranslate + diff;
     
-    if (Math.abs(distance) > 50) {
-        if (distance > 0) {
+    // Add resistance at the edges
+    if (currentIndex === 0 && diff > 0) {
+        currentTranslate = prevTranslate + (diff * 0.3);
+    }
+    if (currentIndex === images.length - 1 && diff < 0) {
+        currentTranslate = prevTranslate + (diff * 0.3);
+    }
+    
+    setSliderPosition();
+}
+
+function touchEnd(event) {
+    isDragging = false;
+    track.style.cursor = 'grab';
+    track.style.transition = 'transform 0.3s ease-out';
+    
+    const diff = getPositionX(event) - startX;
+    const threshold = track.clientWidth * 0.2; // 20% of image width
+    
+    if (Math.abs(diff) > threshold) {
+        if (diff > 0 && currentIndex > 0) {
+            prevImage();
+        } else if (diff < 0 && currentIndex < images.length - 1) {
             nextImage();
         } else {
-            prevImage();
+            updateGallery(); // Reset to current position
         }
-        isDown = false;
+    } else {
+        updateGallery(); // Reset to current position if swipe wasn't strong enough
     }
 }
 
-function handleTouchEnd() {
-    isDown = false;
+function getPositionX(event) {
+    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
 }
 
 // Event Listeners
-track.addEventListener('mousedown', handleTouchStart);
-track.addEventListener('touchstart', handleTouchStart);
-track.addEventListener('mousemove', handleTouchMove);
-track.addEventListener('touchmove', handleTouchMove);
-track.addEventListener('mouseup', handleTouchEnd);
-track.addEventListener('touchend', handleTouchEnd);
-track.addEventListener('mouseleave', handleTouchEnd);
+track.addEventListener('mousedown', touchStart);
+track.addEventListener('touchstart', touchStart);
+track.addEventListener('mousemove', touchMove);
+track.addEventListener('touchmove', touchMove);
+track.addEventListener('mouseup', touchEnd);
+track.addEventListener('touchend', touchEnd);
+track.addEventListener('mouseleave', touchEnd);
 
 leftArrow.addEventListener('click', prevImage);
 rightArrow.addEventListener('click', nextImage);
+
+// Prevent context menu on long press
+window.addEventListener('contextmenu', e => {
+    if (e.target.closest('.gallery-track')) {
+        e.preventDefault();
+    }
+});
 
 // Initialize
 window.addEventListener('load', updateGallery);
