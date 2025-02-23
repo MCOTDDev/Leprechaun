@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollLeft = 0;
     let isDragging = false;
 
-    // Calculate the width each image should move
     function calculateImageOffset() {
         const img = images[0];
         const computedStyle = window.getComputedStyle(img);
@@ -28,24 +27,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return img.offsetWidth + marginLeft + marginRight;
     }
 
+    // Calculate the width each image should move
     function getTranslateX() {
-        const imageWidth = images[0].offsetWidth;
-        const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
-        return -(currentIndex * (imageWidth + (margin * 2)));
         const offset = calculateImageOffset();
         const containerWidth = gallery.offsetWidth;
         const imageOffset = (containerWidth - images[0].offsetWidth) / 2;
         return imageOffset - (currentIndex * offset);
+        const imageWidth = images[0].offsetWidth;
+        const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
+        return -(currentIndex * (imageWidth + (margin * 2)));
     }
 
     function updateGallery() {
-        track.style.transform = `translateX(${getTranslateX()}px)`;
         const translateX = getTranslateX();
         track.style.transform = `translateX(${translateX}px)`;
+        track.style.transform = `translateX(${getTranslateX()}px)`;
         updateArrowVisibility();
     }
 
-@@ -53,7 +62,6 @@
+@@ -62,6 +53,7 @@
         }
     };
 
@@ -53,23 +53,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
-@@ -77,74 +85,80 @@
+@@ -85,38 +77,32 @@
         const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
         const distance = x - startX;
 
-        if (Math.abs(distance) > 100) { // Minimum distance for swipe
         if (Math.abs(distance) > 100) {
+        if (Math.abs(distance) > 100) { // Minimum distance for swipe
             if (distance > 0 && currentIndex > 0) {
                 prevImage();
             } else if (distance < 0 && currentIndex < images.length - 1) {
                 nextImage();
             } else {
-                updateGallery(); // Reset to current position
                 updateGallery();
+                updateGallery(); // Reset to current position
             }
         } else {
-            updateGallery(); // Reset to current position
             updateGallery();
+            updateGallery(); // Reset to current position
         }
     }
 
@@ -84,8 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle window resize
     window.addEventListener('resize', updateGallery);
 
-    // Initial setup
-    updateGallery();
     // Initialize after images are loaded
     Promise.all(Array.from(images).map(img => {
         if (img.complete) return Promise.resolve();
@@ -97,6 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentIndex = 0;
         updateGallery();
     });
+    // Initial setup
+    updateGallery();
 });
 
 
