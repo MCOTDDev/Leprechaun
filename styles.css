@@ -597,7 +597,7 @@ h3 {
 footer {
     color: white;
     text-align: center;
-    padding: clamp(20px, 4vw, 28px);
+    padding: clamp(23px, 4vw, 28px);
     font-family: 'Poppins', sans-serif;
     position: relative;
     bottom: 0;
