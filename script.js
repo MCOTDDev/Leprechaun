@@ -23,7 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function getTranslateX() {
         const imageWidth = images[0].offsetWidth;
         const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
-        return -(currentIndex * (imageWidth + (margin * 2)));
+        const galleryWidth = gallery.offsetWidth;
+        const totalImageWidth = imageWidth + (margin * 2);
+        
+        // Calculate offset to center the gallery
+        const offset = (galleryWidth - totalImageWidth) / 2;
+        
+        return offset - (currentIndex * totalImageWidth);
     }
 
     function updateGallery() {
