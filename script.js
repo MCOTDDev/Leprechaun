@@ -26,8 +26,8 @@ function updateGallery() {
     const centerImageWidth = isMobile ? galleryWidth * 0.85 : 480;
     
     // Calculate the offset to center the current image
-    const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
-                  (currentIndex * (centerImageWidth + (isMobile ? 10 : 20))); // Smaller gap on mobile
+     const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
+                  (currentIndex * centerImageWidth); // Smaller gap on mobile
     
     // Update track position
     track.style.transform = `translateX(${offset}px)`;
