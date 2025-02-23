@@ -10,6 +10,28 @@ function copyToClipboard() {
     });
 }
 
+const track = document.querySelector(".gallery-track");
+const images = Array.from(track.children);
+const leftArrow = document.querySelector(".left-arrow");
+const rightArrow = document.querySelector(".right-arrow");
+let currentIndex = 0;
+
+function updateGallery() {
+    // Calculate the center position
+    const galleryWidth = track.parentElement.offsetWidth;
+    const centerImage = images[currentIndex];
+    const centerImageWidth = 480; // Width of center image
+    
+    // Calculate the offset to center the current image
+    const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
+                  (currentIndex * (centerImageWidth + 20)); // 20px for gap
+    
+    // Update track position
+    track.style.transform = `translateX(${offset}px)`;
+    
+    // Update image states
+    images.forEach((img, index) => {
+        img.classList.remove('center', 'side', 'hidden');
 document.addEventListener('DOMContentLoaded', function() {
     const track = document.querySelector('.gallery-track');
     const images = Array.from(track.children);
@@ -19,33 +41,53 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollLeft = 0;
     let isDragging = false;
 
-    function calculateImageOffset() {
-        const img = images[0];
-        const computedStyle = window.getComputedStyle(img);
-        const marginRight = parseInt(computedStyle.marginRight);
-        const marginLeft = parseInt(computedStyle.marginLeft);
-        return img.offsetWidth + marginLeft + marginRight;
-    }
-
     // Calculate the width each image should move
     function getTranslateX() {
-        const offset = calculateImageOffset();
-        const containerWidth = gallery.offsetWidth;
-        const imageOffset = (containerWidth - images[0].offsetWidth) / 2;
-        return imageOffset - (currentIndex * offset);
         const imageWidth = images[0].offsetWidth;
         const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
         return -(currentIndex * (imageWidth + (margin * 2)));
     }
 
     function updateGallery() {
-        const translateX = getTranslateX();
-        track.style.transform = `translateX(${translateX}px)`;
         track.style.transform = `translateX(${getTranslateX()}px)`;
         updateArrowVisibility();
     }
 
-@@ -62,6 +53,7 @@
+    function updateArrowVisibility() {
+        const leftArrow = document.querySelector('.left-arrow');
+        const rightArrow = document.querySelector('.right-arrow');
+
+        if (index === currentIndex) {
+            img.classList.add('center');
+        } else if (index === currentIndex - 1 || index === currentIndex + 1) {
+            img.classList.add('side');
+        } else {
+            img.classList.add('hidden');
+        leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+        rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
+    }
+
+    window.nextImage = function() {
+        if (currentIndex < images.length - 1) {
+            currentIndex++;
+            updateGallery();
+        }
+    });
+    
+    // Update arrow visibility
+    leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+    rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
+}
+    };
+
+function nextImage() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+        updateGallery();
+    window.prevImage = function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateGallery();
         }
     };
 
@@ -53,26 +95,49 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
-@@ -85,38 +77,32 @@
+        scrollLeft = getTranslateX();
+        track.style.transition = 'none';
+    }
+}
+
+function prevImage() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateGallery();
+    function handleDragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
+        const distance = x - startX;
+        track.style.transform = `translateX(${scrollLeft + distance}px)`;
+    }
+
+    function handleDragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.transition = 'transform 0.3s ease-out';
+        
         const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
         const distance = x - startX;
-
-        if (Math.abs(distance) > 100) {
+        
         if (Math.abs(distance) > 100) { // Minimum distance for swipe
             if (distance > 0 && currentIndex > 0) {
                 prevImage();
             } else if (distance < 0 && currentIndex < images.length - 1) {
                 nextImage();
             } else {
-                updateGallery();
                 updateGallery(); // Reset to current position
             }
         } else {
-            updateGallery();
             updateGallery(); // Reset to current position
         }
     }
+}
 
+// Initial setup
+window.addEventListener('load', updateGallery);
+window.addEventListener('resize', updateGallery);
+updateGallery();
     // Add event listeners for touch and mouse events
     gallery.addEventListener('mousedown', handleDragStart);
     gallery.addEventListener('touchstart', handleDragStart);
@@ -84,17 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle window resize
     window.addEventListener('resize', updateGallery);
 
-    // Initialize after images are loaded
-    Promise.all(Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-        });
-    })).then(() => {
-        currentIndex = 0;
-        updateGallery();
-    });
     // Initial setup
     updateGallery();
 });
