@@ -76,8 +76,8 @@ body {
 
 /* Dex Screener Icon */
 .social-links .dex-icon {
-    width: clamp(45px, 10vw, 55px);
-    height: clamp(45px, 10vw, 55px);
+    width: clamp(40px, 8vw, 50px);
+    height: clamp(40px, 8vw, 50px);
     margin-top: -6px;
     margin-left: -3px;
     vertical-align: middle;
