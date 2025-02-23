@@ -20,12 +20,12 @@ function updateGallery() {
     const galleryWidth = track.parentElement.offsetWidth;
     const isMobile = window.innerWidth <= 768;
     
-    // Define centerImageWidth once
-    const centerImageWidth = isMobile ? galleryWidth * 0.85 : 480;
+    // Adjust this based on your CSS values
+    const centerImageWidth = isMobile ? galleryWidth * 0.85 : 667; // Using your CSS value for center image
     
-    // Single offset calculation with increased scroll distance
+    // Calculate offset with a larger multiplier to prevent lagging behind
     const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
-                  (currentIndex * centerImageWidth * 1.2); // Increased scroll distance
+                  (currentIndex * centerImageWidth * 1.5); // Increased multiplier to 1.5
     
     // Update track position
     track.style.transform = `translateX(${offset}px)`;
