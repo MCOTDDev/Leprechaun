@@ -20,11 +20,14 @@ function updateGallery() {
     // Calculate the center position
     const galleryWidth = track.parentElement.offsetWidth;
     const centerImage = images[currentIndex];
-    const centerImageWidth = 480; // Width of center image
+    const isMobile = window.innerWidth <= 768;
+    
+    // Adjust centerImageWidth based on screen size
+    const centerImageWidth = isMobile ? galleryWidth * 0.85 : 480;
     
     // Calculate the offset to center the current image
     const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
-                  (currentIndex * (centerImageWidth + 20)); // 20px for gap
+                  (currentIndex * (centerImageWidth + (isMobile ? 10 : 20))); // Smaller gap on mobile
     
     // Update track position
     track.style.transform = `translateX(${offset}px)`;
@@ -32,45 +35,13 @@ function updateGallery() {
     // Update image states
     images.forEach((img, index) => {
         img.classList.remove('center', 'side', 'hidden');
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.querySelector('.gallery-track');
-    const images = Array.from(track.children);
-    const gallery = document.querySelector('.gallery');
-    let currentIndex = 0;
-    let startX = 0;
-    let scrollLeft = 0;
-    let isDragging = false;
-
-    // Calculate the width each image should move
-    function getTranslateX() {
-        const imageWidth = images[0].offsetWidth;
-        const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
-        return -(currentIndex * (imageWidth + (margin * 2)));
-    }
-
-    function updateGallery() {
-        track.style.transform = `translateX(${getTranslateX()}px)`;
-        updateArrowVisibility();
-    }
-
-    function updateArrowVisibility() {
-        const leftArrow = document.querySelector('.left-arrow');
-        const rightArrow = document.querySelector('.right-arrow');
-
+        
         if (index === currentIndex) {
             img.classList.add('center');
-        } else if (index === currentIndex - 1 || index === currentIndex + 1) {
+        } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
             img.classList.add('side');
         } else {
             img.classList.add('hidden');
-        leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
-        rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
-    }
-
-    window.nextImage = function() {
-        if (currentIndex < images.length - 1) {
-            currentIndex++;
-            updateGallery();
         }
     });
     
@@ -78,25 +49,11 @@ document.addEventListener('DOMContentLoaded', function() {
     leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
     rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
 }
-    };
 
 function nextImage() {
     if (currentIndex < images.length - 1) {
         currentIndex++;
         updateGallery();
-    window.prevImage = function() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateGallery();
-        }
-    };
-
-    // Touch and mouse events for swipe functionality
-    function handleDragStart(e) {
-        isDragging = true;
-        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
-        scrollLeft = getTranslateX();
-        track.style.transition = 'none';
     }
 }
 
@@ -104,33 +61,6 @@ function prevImage() {
     if (currentIndex > 0) {
         currentIndex--;
         updateGallery();
-    function handleDragMove(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
-        const distance = x - startX;
-        track.style.transform = `translateX(${scrollLeft + distance}px)`;
-    }
-
-    function handleDragEnd(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        track.style.transition = 'transform 0.3s ease-out';
-        
-        const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
-        const distance = x - startX;
-        
-        if (Math.abs(distance) > 100) { // Minimum distance for swipe
-            if (distance > 0 && currentIndex > 0) {
-                prevImage();
-            } else if (distance < 0 && currentIndex < images.length - 1) {
-                nextImage();
-            } else {
-                updateGallery(); // Reset to current position
-            }
-        } else {
-            updateGallery(); // Reset to current position
-        }
     }
 }
 
@@ -138,21 +68,6 @@ function prevImage() {
 window.addEventListener('load', updateGallery);
 window.addEventListener('resize', updateGallery);
 updateGallery();
-    // Add event listeners for touch and mouse events
-    gallery.addEventListener('mousedown', handleDragStart);
-    gallery.addEventListener('touchstart', handleDragStart);
-    window.addEventListener('mousemove', handleDragMove);
-    window.addEventListener('touchmove', handleDragMove, { passive: false });
-    window.addEventListener('mouseup', handleDragEnd);
-    window.addEventListener('touchend', handleDragEnd);
-
-    // Handle window resize
-    window.addEventListener('resize', updateGallery);
-
-    // Initial setup
-    updateGallery();
-});
-
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get the heading element
