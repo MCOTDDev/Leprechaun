@@ -173,16 +173,16 @@ body {
 .gallery-track {
     display: flex;
     transition: transform 0.3s ease-out;
+    will-change: transform;
 }
 
 .gallery-track img {
-    width: calc(100vw - 40px);
-    max-width: 800px;
-    height: auto;
-    aspect-ratio: 4/3;
-    object-fit: cover;
+    min-width: 0;
+    width: 800px; /* Fixed width for desktop */
+    height: 600px; /* Fixed height for desktop */
+    object-fit: contain;
     border-radius: 8px;
-    margin: 0 20px;
+    margin: 0 10px;
     transition: all 0.3s ease;
     user-select: none;
     -webkit-user-drag: none;
@@ -218,11 +218,12 @@ body {
     right: 20px;
 }
 
-/* Mobile Optimization */
 @media (max-width: 768px) {
     .gallery-track img {
-        width: calc(100vw - 20px);
-        margin: 0 10px;
+        width: calc(100vw - 40px);
+        height: auto;
+        aspect-ratio: 4/3;
+        margin: 0 20px;
     }
     
     .gallery-arrow {
@@ -238,6 +239,7 @@ body {
         right: 10px;
     }
 }
+
 /* How to Buy Section */
 .how-to-buy {
     font-size: clamp(32px, 8vw, 48px);
