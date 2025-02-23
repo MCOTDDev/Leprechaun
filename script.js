@@ -10,62 +10,95 @@ function copyToClipboard() {
     });
 }
 
-const track = document.querySelector(".gallery-track");
-const images = Array.from(track.children);
-const leftArrow = document.querySelector(".left-arrow");
-const rightArrow = document.querySelector(".right-arrow");
-let currentIndex = 0;
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.querySelector('.gallery-track');
+    const images = Array.from(track.children);
+    const gallery = document.querySelector('.gallery');
+    let currentIndex = 0;
+    let startX = 0;
+    let scrollLeft = 0;
+    let isDragging = false;
 
-function updateGallery() {
-    const isMobile = window.innerWidth <= 768;
-    const galleryWidth = track.parentElement.offsetWidth;
-    const centerImage = images[currentIndex];
-    
-    // Adjust calculations based on screen size
-    const imageWidth = isMobile ? galleryWidth : galleryWidth * 0.8;
-    const offset = isMobile ? 
-        -currentIndex * galleryWidth :
-        (galleryWidth / 2) - (imageWidth / 2) - (currentIndex * imageWidth);
-    
-    // Update track position
-    track.style.transform = `translateX(${offset}px)`;
-    
-    // Update image states
-    images.forEach((img, index) => {
-        img.classList.remove('center', 'side', 'hidden');
-        
-        if (index === currentIndex) {
-            img.classList.add('center');
-        } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
-            img.classList.add('side');
-        } else {
-            img.classList.add('hidden');
+    // Calculate the width each image should move
+    function calculateImageOffset() {
+        const img = images[0];
+        const computedStyle = window.getComputedStyle(img);
+        const marginRight = parseInt(computedStyle.marginRight);
+        const marginLeft = parseInt(computedStyle.marginLeft);
+        return img.offsetWidth + marginLeft + marginRight;
+    }
+
+    function getTranslateX() {
+        const imageWidth = images[0].offsetWidth;
+        const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
+        return -(currentIndex * (imageWidth + (margin * 2)));
+        const offset = calculateImageOffset();
+        const containerWidth = gallery.offsetWidth;
+        const imageOffset = (containerWidth - images[0].offsetWidth) / 2;
+        return imageOffset - (currentIndex * offset);
+    }
+
+    function updateGallery() {
+        track.style.transform = `translateX(${getTranslateX()}px)`;
+        const translateX = getTranslateX();
+        track.style.transform = `translateX(${translateX}px)`;
+        updateArrowVisibility();
+    }
+
+@@ -53,7 +62,6 @@
         }
+    };
+
+    // Touch and mouse events for swipe functionality
+    function handleDragStart(e) {
+        isDragging = true;
+        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
+@@ -77,74 +85,80 @@
+        const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
+        const distance = x - startX;
+
+        if (Math.abs(distance) > 100) { // Minimum distance for swipe
+        if (Math.abs(distance) > 100) {
+            if (distance > 0 && currentIndex > 0) {
+                prevImage();
+            } else if (distance < 0 && currentIndex < images.length - 1) {
+                nextImage();
+            } else {
+                updateGallery(); // Reset to current position
+                updateGallery();
+            }
+        } else {
+            updateGallery(); // Reset to current position
+            updateGallery();
+        }
+    }
+
+    // Add event listeners for touch and mouse events
+    gallery.addEventListener('mousedown', handleDragStart);
+    gallery.addEventListener('touchstart', handleDragStart);
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('touchmove', handleDragMove, { passive: false });
+    window.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('touchend', handleDragEnd);
+
+    // Handle window resize
+    window.addEventListener('resize', updateGallery);
+
+    // Initial setup
+    updateGallery();
+    // Initialize after images are loaded
+    Promise.all(Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+        });
+    })).then(() => {
+        currentIndex = 0;
+        updateGallery();
     });
-    
-    // Update arrow visibility
-    leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
-    rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
-}
+});
 
-function nextImage() {
-    if (currentIndex < images.length - 1) {
-        currentIndex++;
-        updateGallery();
-    }
-}
-
-function prevImage() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        updateGallery();
-    }
-}
-
-// Initial setup and event listeners
-window.addEventListener('load', updateGallery);
-window.addEventListener('resize', updateGallery);
-updateGallery();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get the heading element
