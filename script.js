@@ -17,36 +17,37 @@ const rightArrow = document.querySelector(".right-arrow");
 let currentIndex = 0;
 
 function updateGallery() {
-    const galleryWidth = track.parentElement.offsetWidth;
-    const isMobile = window.innerWidth <= 768;
-    
-    // Adjust this based on your CSS values
-    const centerImageWidth = isMobile ? galleryWidth * 0.85 : 667; // Using your CSS value for center image
-    
-    // Calculate offset with a larger multiplier to prevent lagging behind
-    const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
-                  (currentIndex * centerImageWidth * 1.5); // Increased multiplier to 1.5
-    
-    // Update track position
-    track.style.transform = `translateX(${offset}px)`;
-    
-    // Update image states
-    images.forEach((img, index) => {
-        img.classList.remove('center', 'side', 'hidden');
-        
-        if (index === currentIndex) {
-            img.classList.add('center');
-        } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
-            img.classList.add('side');
-        } else {
-            img.classList.add('hidden');
-        }
-    });
-}
-    
-    // Update arrow visibility
-    leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
-    rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
+   // Calculate the center position
+   const galleryWidth = track.parentElement.offsetWidth;
+   const centerImage = images[currentIndex];
+   const isMobile = window.innerWidth <= 768;
+   
+   // Keep original centerImageWidth calculation
+   const centerImageWidth = isMobile ? galleryWidth * 0.85 : 480;
+   
+   // Modified offset calculation to scroll further
+   const offset = (galleryWidth / 2) - (centerImageWidth / 2) - 
+                 (currentIndex * (centerImageWidth + 20)) * 1.5;
+   
+   // Update track position
+   track.style.transform = `translateX(${offset}px)`;
+   
+   // Update image states
+   images.forEach((img, index) => {
+       img.classList.remove('center', 'side', 'hidden');
+       
+       if (index === currentIndex) {
+           img.classList.add('center');
+       } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
+           img.classList.add('side');
+       } else {
+           img.classList.add('hidden');
+       }
+   });
+   
+   // Update arrow visibility
+   leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+   rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
 }
 
 function nextImage() {
