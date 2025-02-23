@@ -156,7 +156,7 @@ body {
 }
 
 .gallery-container {
-     max-width: min(1000px, 60vw); 
+     max-width: 800px; 
             margin: 0 auto;
             padding: 20px;
             position: relative;
