@@ -19,24 +19,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollLeft = 0;
     let isDragging = false;
 
-    function calculateImageOffset() {
-        const img = images[0];
-        const computedStyle = window.getComputedStyle(img);
-        const marginRight = parseInt(computedStyle.marginRight);
-        const marginLeft = parseInt(computedStyle.marginLeft);
-        return img.offsetWidth + marginLeft + marginRight;
-    }
-
+    // Calculate the width each image should move
     function getTranslateX() {
-        const offset = calculateImageOffset();
-        const containerWidth = gallery.offsetWidth;
-        const imageOffset = (containerWidth - images[0].offsetWidth) / 2;
-        return imageOffset - (currentIndex * offset);
+        const imageWidth = images[0].offsetWidth;
+        const margin = parseInt(window.getComputedStyle(images[0]).marginRight);
+        return -(currentIndex * (imageWidth + (margin * 2)));
     }
 
     function updateGallery() {
-        const translateX = getTranslateX();
-        track.style.transform = `translateX(${translateX}px)`;
+        track.style.transform = `translateX(${getTranslateX()}px)`;
         updateArrowVisibility();
     }
 
@@ -62,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Touch and mouse events for swipe functionality
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
@@ -85,38 +77,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = e.type === 'mouseup' ? e.pageX : e.changedTouches[0].pageX;
         const distance = x - startX;
         
-        if (Math.abs(distance) > 100) {
+        if (Math.abs(distance) > 100) { // Minimum distance for swipe
             if (distance > 0 && currentIndex > 0) {
                 prevImage();
             } else if (distance < 0 && currentIndex < images.length - 1) {
                 nextImage();
             } else {
-                updateGallery();
+                updateGallery(); // Reset to current position
             }
         } else {
-            updateGallery();
+            updateGallery(); // Reset to current position
         }
     }
 
+    // Add event listeners for touch and mouse events
     gallery.addEventListener('mousedown', handleDragStart);
     gallery.addEventListener('touchstart', handleDragStart);
     window.addEventListener('mousemove', handleDragMove);
     window.addEventListener('touchmove', handleDragMove, { passive: false });
     window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('touchend', handleDragEnd);
+
+    // Handle window resize
     window.addEventListener('resize', updateGallery);
 
-    // Initialize after images are loaded
-    Promise.all(Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-        });
-    })).then(() => {
-        currentIndex = 0;
-        updateGallery();
-    });
+    // Initial setup
+    updateGallery();
 });
 
 document.addEventListener('DOMContentLoaded', function() {
