@@ -14,35 +14,38 @@ const track = document.querySelector(".gallery-track");
 const images = Array.from(track.children);
 const leftArrow = document.querySelector(".left-arrow");
 const rightArrow = document.querySelector(".right-arrow");
-
 let currentIndex = 0;
-let startX = 0;
-let currentTranslate = 0;
-let prevTranslate = 0;
-let isDragging = false;
 
 function updateGallery() {
-    const imageWidth = track.clientWidth;
-    currentTranslate = -currentIndex * imageWidth;
-    prevTranslate = currentTranslate;
-    setSliderPosition();
-
-    // Update active states
+    const isMobile = window.innerWidth <= 768;
+    const galleryWidth = track.parentElement.offsetWidth;
+    const centerImage = images[currentIndex];
+    
+    // Adjust calculations based on screen size
+    const imageWidth = isMobile ? galleryWidth : galleryWidth * 0.8;
+    const offset = isMobile ? 
+        -currentIndex * galleryWidth :
+        (galleryWidth / 2) - (imageWidth / 2) - (currentIndex * imageWidth);
+    
+    // Update track position
+    track.style.transform = `translateX(${offset}px)`;
+    
+    // Update image states
     images.forEach((img, index) => {
+        img.classList.remove('center', 'side', 'hidden');
+        
         if (index === currentIndex) {
-            img.classList.add('active');
+            img.classList.add('center');
+        } else if (!isMobile && (index === currentIndex - 1 || index === currentIndex + 1)) {
+            img.classList.add('side');
         } else {
-            img.classList.remove('active');
+            img.classList.add('hidden');
         }
     });
-
+    
     // Update arrow visibility
     leftArrow.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
     rightArrow.style.visibility = currentIndex === images.length - 1 ? 'hidden' : 'visible';
-}
-
-function setSliderPosition() {
-    track.style.transform = `translateX(${currentTranslate}px)`;
 }
 
 function nextImage() {
@@ -59,77 +62,7 @@ function prevImage() {
     }
 }
 
-// Touch Events
-function touchStart(event) {
-    isDragging = true;
-    startX = getPositionX(event);
-    track.style.cursor = 'grabbing';
-    track.style.transition = 'none';
-}
-
-function touchMove(event) {
-    if (!isDragging) return;
-    
-    const currentX = getPositionX(event);
-    const diff = currentX - startX;
-    currentTranslate = prevTranslate + diff;
-    
-    // Add resistance at the edges
-    if (currentIndex === 0 && diff > 0) {
-        currentTranslate = prevTranslate + (diff * 0.3);
-    }
-    if (currentIndex === images.length - 1 && diff < 0) {
-        currentTranslate = prevTranslate + (diff * 0.3);
-    }
-    
-    setSliderPosition();
-}
-
-function touchEnd(event) {
-    isDragging = false;
-    track.style.cursor = 'grab';
-    track.style.transition = 'transform 0.3s ease-out';
-    
-    const diff = getPositionX(event) - startX;
-    const threshold = track.clientWidth * 0.2; // 20% of image width
-    
-    if (Math.abs(diff) > threshold) {
-        if (diff > 0 && currentIndex > 0) {
-            prevImage();
-        } else if (diff < 0 && currentIndex < images.length - 1) {
-            nextImage();
-        } else {
-            updateGallery(); // Reset to current position
-        }
-    } else {
-        updateGallery(); // Reset to current position if swipe wasn't strong enough
-    }
-}
-
-function getPositionX(event) {
-    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-}
-
-// Event Listeners
-track.addEventListener('mousedown', touchStart);
-track.addEventListener('touchstart', touchStart);
-track.addEventListener('mousemove', touchMove);
-track.addEventListener('touchmove', touchMove);
-track.addEventListener('mouseup', touchEnd);
-track.addEventListener('touchend', touchEnd);
-track.addEventListener('mouseleave', touchEnd);
-
-leftArrow.addEventListener('click', prevImage);
-rightArrow.addEventListener('click', nextImage);
-
-// Prevent context menu on long press
-window.addEventListener('contextmenu', e => {
-    if (e.target.closest('.gallery-track')) {
-        e.preventDefault();
-    }
-});
-
-// Initialize
+// Initial setup and event listeners
 window.addEventListener('load', updateGallery);
 window.addEventListener('resize', updateGallery);
 updateGallery();
