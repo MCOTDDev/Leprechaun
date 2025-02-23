@@ -156,7 +156,7 @@ body {
 }
 
 .gallery-container {
-            max-width: 1200px; /* Increased for landscape orientation */
+     max-width: min(1000px, 80vw); 
             margin: 0 auto;
             padding: 20px;
             position: relative;
